@@ -17,46 +17,47 @@ fn main() {
     }
 }
 
+fn input_to_cards(card_input: Vec<String>) -> Vec<Card> {
+    card_input
+        .into_iter()
+        .map(parse_card)
+        .collect() // Iterátor lánc, a Card-ok vektorát adja vissza
+}
+
 // Card vektor létrehozása
-fn input_to_cards(card_input: Vec<String>) -> Vec<Card>{
-    let mut cards: Vec<Card> = vec![];
+fn parse_card(input: String) -> Card {
+    let parts: Vec<&str> = input.split(':').collect();
 
-    for i in card_input{
-        let parts: Vec<&str> = i.split(':').collect();
-        let card_id: i32 = parts[0]
-            .split_whitespace()
-            .nth(1)
-            .unwrap()
-            .parse()
-            .unwrap();
+    let card_id: i32 = parts[0]
+    .split_whitespace()
+    .nth(1)
+    .unwrap()
+    .parse()
+    .unwrap();
 
-        let numbers: Vec<i32> = parts[1]
-            .split('|')
-            .nth(0)
-            .unwrap()
-            .split_whitespace()
-            .map(|num| num.parse::<i32>().unwrap())
-            .collect();
+    let (numbers, winning_numbers) = parse_number(parts[1]);
 
-        let winning_numbers: Vec<i32> = parts[1]
-        .split('|')
-        .nth(1)
-        .unwrap()
+    Card {
+        card_id,
+        numbers,
+        winning_numbers,
+        points: 0
+    }
+
+
+}
+
+fn parse_number(numbers_input: &str) -> (Vec<i32>, Vec<i32>) {
+    let parts: Vec<&str> = numbers_input.split('|').collect();
+    let numbers = parts[0]
         .split_whitespace()
         .map(|num| num.parse::<i32>().unwrap())
         .collect();
-
-        let card = Card{
-            card_id,
-            numbers,
-            winning_numbers,
-            points: 0
-        };
-
-        cards.push(card)
-    }
-    
-    return cards;
+    let winning_numbers = parts[1]
+        .split_whitespace()
+        .map(|num| num.parse::<i32>().unwrap())
+        .collect();
+    (numbers, winning_numbers)
 }
 
 // Option típusú paraméter
