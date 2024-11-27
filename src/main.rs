@@ -7,12 +7,14 @@ struct Card{
     card_id: i32,
     numbers: Vec<i32>,
     winning_numbers: Vec<i32>,
-    points: i32
+    points: i32,
+    winning_number_count: i32
 }
 
 impl Card{
     fn calculate_points(&mut self){
         let mut sum: i32 = 0;
+        let mut winning_number_count: i32 = 0;
 
         for i in &self.numbers{
             for j in &self.winning_numbers{
@@ -23,9 +25,12 @@ impl Card{
                     else{
                         sum *= 2;
                     }
+                    // A második feladat részhez a nyertes számok, számának meghatározása
+                    winning_number_count += 1;
                 }
             }
         }
+        self.winning_number_count = winning_number_count;
         self.points = sum;
     }
 }
@@ -38,10 +43,13 @@ fn main() {
     let first_part_result = first_part(cards);
 
     println!("1. part result: {}",first_part_result);
-
-    pause();
     
 }
+
+
+
+
+// --- First part --- //
 fn first_part(cards: Vec<Card>) -> i32{
     let mut sum: i32 = 0;
 
@@ -105,16 +113,4 @@ fn input_read(file_path: Option<&str>) -> Vec<String>{
         //.inspect(|line| println!("{}",line))
         .map(String::from)
         .collect()
-}
-
-fn pause() {
-    let mut stdin = io::stdin();
-    let mut stdout = io::stdout();
-
-    // We want the cursor to stay at the end of the line, so we print without a newline and flush manually.
-    write!(stdout, "Press any key to continue...").unwrap();
-    stdout.flush().unwrap();
-
-    // Read a single byte and discard
-    let _ = stdin.read(&mut [0u8]).unwrap();
 }
