@@ -1,9 +1,6 @@
 use std::fs::read_to_string;
-use std::io;
-use std::io::prelude::*;
-
-
 struct Card{
+    raw_card: String,
     card_id: i32,
     numbers: Vec<i32>,
     winning_numbers: Vec<i32>,
@@ -36,24 +33,38 @@ impl Card{
 }
 
 fn main() {
-    let input_cards = input_read(None);
+    let input_cards = input_read(Some("input/test_4.txt"));
 
-    let cards = input_to_cards(input_cards);
+    let mut cards = input_to_cards(input_cards);
 
-    let first_part_result = first_part(cards);
+    let first_part_result = first_part(&mut cards);
 
-    println!("1. part result: {}",first_part_result);
+    //println!("1. part result: {}",first_part_result);
+
+    second_part(&cards);
     
 }
 
-
+fn second_part(cards: &Vec<Card>) -> i32{
+    for card in cards{
+        println!("{:?}",card.raw_card);
+        if card.winning_number_count > 0{
+            for i in card.card_id..card.winning_number_count{
+                println!("Card id: {:?} Winning number count: {:?}",
+                card.card_id,card.winning_number_count);
+                println!("i: {:?}",i)
+            }
+        }
+    }
+    return 0;
+}
 
 
 // --- First part --- //
-fn first_part(cards: Vec<Card>) -> i32{
+fn first_part(cards: &mut Vec<Card>) -> i32{
     let mut sum: i32 = 0;
 
-    for mut card in cards{
+    for card in cards{
         card.calculate_points();
         sum += card.points;
     }
@@ -69,6 +80,7 @@ fn input_to_cards(card_input: Vec<String>) -> Vec<Card> {
 }
 // Card vektor létrehozása
 fn parse_card(input: String) -> Card {
+
     let parts: Vec<&str> = input.split(':').collect();
 
     let card_id: i32 = parts[0]
@@ -81,10 +93,12 @@ fn parse_card(input: String) -> Card {
     let (numbers, winning_numbers) = parse_number(parts[1]);
 
     Card {
+        raw_card: input,
         card_id,
         numbers,
         winning_numbers,
-        points: 0
+        points: 0,
+        winning_number_count: 0
     }
 
 
